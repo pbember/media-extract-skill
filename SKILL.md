@@ -32,7 +32,9 @@ promise that every TikTok, Facebook, or Instagram URL works.
 ## Preflight and storage
 
 1. Resolve `yt-dlp`, `ffprobe`, and `ffmpeg`; run their version/help commands for
-   the selected operation. Transcription also needs Python and `faster-whisper`.
+   the selected operation. YouTube extraction in current yt-dlp also needs a
+   JavaScript runtime such as `deno`; check `deno --version` before YouTube
+   work. Transcription also needs Python and `faster-whisper`.
    Missing tools are a setup blocker, not browser permission. Install only
    within the user's setup authority.
 2. Choose a task-specific temporary output directory outside source repositories.
@@ -101,7 +103,9 @@ not download a model or call a transcription API:
 python scripts/transcribe.py "<local-file>" --model "<cached-model-directory>" --language en > "<output-directory>/transcript.json"
 ```
 
-Omit `--language` when it is unknown. Use a multilingual model for non-English
+Omit `--language` when it is unknown. The helper uses CUDA when available and
+falls back to CPU if CUDA fails; force one with `--device cpu` or `--device cuda`.
+The output records the `device` and `compute_type` used. Use a multilingual model for non-English
 speech. See [local transcription setup](references/local-transcription.md) only
 when dependencies or a model are missing. Keep the original media unchanged.
 

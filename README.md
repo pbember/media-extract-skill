@@ -47,7 +47,7 @@ npx skills add pekth/media-extract-skill
 
 * **Zero Playback Guarantee** — Read source material strictly through headless CLI tools. A URL or request to analyze media is never treated as permission to launch a player or browser.
 * **Minimum Extraction Principle** — Always extract the lightest viable artifact: metadata first, then captions, then local audio transcription, then targeted still frames.
-* **Offline Faster Whisper Helper** — Standalone script (`scripts/transcribe.py`) with GPU/CPU auto precision (float16 on CUDA, INT8 otherwise) and `local_files_only=True` for portable, dependency-isolated local speech-to-text.
+* **Offline Faster Whisper Helper** — Standalone script (`scripts/transcribe.py`) with GPU/CPU auto precision (float16 on CUDA, INT8 otherwise, CPU fallback, `--device` and `--compute-type` overrides) and `local_files_only=True` for portable, dependency-isolated local speech-to-text.
 * **Untrusted Evidence Model** — Subtitles, transcripts, and metadata are treated as untrusted evidence with timestamps, flagging hallucinations, silence gaps, and unverified names/numbers without guesswork diarization.
 * **No Cookie Theft or Scraper Behavior** — Operates with `--ignore-config --no-exec` to prevent local hook execution. Does not crawl playlists, profile feeds, or extract browser cookies.
 
@@ -57,7 +57,7 @@ npx skills add pekth/media-extract-skill
 
 media-extract is designed for secure, non-intrusive media research:
 * **Zero Cloud Transcription**: Source media files and transcripts are never sent to third-party cloud APIs.
-* **Isolated Offline Model Loading**: The Faster Whisper helper loads models strictly from locally cached directories with network calls disabled during inference.
+* **Isolated Offline Model Loading**: The Faster Whisper helper loads models strictly from locally cached directories with `local_files_only=True`, so no model is downloaded during transcription.
 * **Sanitized Execution**: All `yt-dlp` commands pass parameters as discrete argument arrays to prevent shell interpolation vulnerabilities.
 * **Clean Commits**: Model weights, audio slices, and transcripts stay isolated in temporary directories outside the project repository.
 
@@ -79,6 +79,7 @@ npx skills add ./media-extract-skill --skill media-extract
 ### Prerequisites
 The skill uses the tools matching your requested operation:
 * **yt-dlp**: For public metadata and caption extraction (`yt-dlp --version`)
+* **deno** (or another JavaScript runtime yt-dlp supports): Needed by current yt-dlp for YouTube (`deno --version`)
 * **FFmpeg / ffprobe**: For inspecting local files and extracting still frames (`ffmpeg -version`)
 * **Python 3.10+ & Faster Whisper** *(optional, for local speech)*: Follow [local transcription setup](references/local-transcription.md) to set up an isolated environment and cached model.
 

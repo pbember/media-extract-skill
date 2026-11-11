@@ -6,6 +6,11 @@
 
 ## Unreleased
 
+- Add `--device {auto,cuda,cpu}` and `--compute-type` to the transcription
+  helper. An explicit device disables the CPU fallback. Output JSON is unchanged.
+- Document `deno` as a yt-dlp prerequisite for YouTube. Correct the README
+  claim that network calls are disabled during inference.
+
 - Extend CUDA fallback to transcription and lazy segment generation. Restart
   once on CPU INT8 and discard partial GPU results before emitting JSON.
 - Add entry-point regressions for CPU and GPU success, CUDA failures at each

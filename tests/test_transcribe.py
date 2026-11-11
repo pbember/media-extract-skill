@@ -51,14 +51,35 @@ class InferenceTest(unittest.TestCase):
                 with self.assertRaisesRegex(RuntimeError, "CPU unavailable"):
                     self.run_helper(cuda_count, "segments", cpu_failure=True)
 
-    def run_helper(self, cuda_count, failure, cpu_failure=False):
+    def test_explicit_device_skips_fallback(self):
+        output, warning, devices = self.run_helper(1, None, extra=["--device", "cpu"])
+        self.assertEqual(devices, ["cpu"])
+        self.assertEqual(json.loads(output)["segments"][0]["text"], "hello")
+        self.assertEqual(warning, "")
+        for failure in ("load", "segments"):
+            with self.subTest(failure=failure):
+                with self.assertRaisesRegex(RuntimeError, "CUDA unavailable"):
+                    self.run_helper(1, failure, extra=["--device", "cuda"])
+
+    def test_compute_type_applies_to_selected_device_only(self):
+        _, _, devices = self.run_helper(
+            0, None, extra=["--compute-type", "float32"], compute={"cpu": "float32"})
+        self.assertEqual(devices, ["cpu"])
+        _, warning, devices = self.run_helper(
+            1, "load", extra=["--compute-type", "int8_float16"],
+            compute={"cuda": "int8_float16", "cpu": "int8"})
+        self.assertEqual(devices, ["cuda", "cpu"])
+        self.assertIn("falling back to CPU", warning)
+
+    def run_helper(self, cuda_count, failure, cpu_failure=False, extra=(), compute=None):
         devices = []
+        compute = {"cuda": "float16", "cpu": "int8", **(compute or {})}
 
         def whisper_model(path, *, device, compute_type, local_files_only):
             devices.append(device)
             self.assertTrue(Path(path).is_absolute())
             self.assertTrue(local_files_only)
-            self.assertEqual(compute_type, "float16" if device == "cuda" else "int8")
+            self.assertEqual(compute_type, compute[device])
             if device == "cuda" and failure == "load":
                 raise RuntimeError("CUDA unavailable")
 
@@ -92,7 +113,7 @@ class InferenceTest(unittest.TestCase):
                 "ctranslate2": SimpleNamespace(get_cuda_device_count=lambda: cuda_count),
                 "faster_whisper": SimpleNamespace(WhisperModel=whisper_model),
             }
-            argv = [str(SCRIPT), str(media), "--model", str(root), "--language", "en"]
+            argv = [str(SCRIPT), str(media), "--model", str(root), "--language", "en", *extra]
             with patch.dict(sys.modules, modules), patch.object(sys, "argv", argv):
                 with redirect_stdout(output), redirect_stderr(warning):
                     try:

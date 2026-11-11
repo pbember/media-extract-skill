@@ -9,7 +9,8 @@ directory before importing ASR dependencies. It loads models with
 CUDA float16 is preferred when a CUDA device is detected. The helper consumes
 all GPU segments inside the fallback guard. If that attempt fails, it restarts
 once on CPU INT8 and discards partial GPU text. A CPU failure propagates without
-JSON output. See [local transcription setup](../references/local-transcription.md)
+JSON output. `--device cuda` or `--device cpu` disables the fallback, and
+`--compute-type` overrides precision for the selected device only. See [local transcription setup](../references/local-transcription.md)
 for dependencies and model preparation.
 
 ## Verification
@@ -36,7 +37,9 @@ mode on pull requests. See [ADR-0001](adr/0001-documentation-gate.md).
 ## Document index
 
 <!-- documentation:start -->
+- `AGENTS.md`
 - `CHANGELOG.md`
+- `CLAUDE.md`
 - `README.md`
 - `SKILL.md`
 - `docs/KB.md`

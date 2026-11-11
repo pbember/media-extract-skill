@@ -32,7 +32,9 @@ promise that every TikTok, Facebook, or Instagram URL works.
 ## Preflight and storage
 
 1. Resolve `yt-dlp`, `ffprobe`, and `ffmpeg`; run their version/help commands for
-   the selected operation. Transcription also needs Python and `faster-whisper`.
+   the selected operation. YouTube extraction in current yt-dlp also needs a
+   JavaScript runtime such as `deno`; check `deno --version` before YouTube
+   work. Transcription also needs Python and `faster-whisper`.
    Missing tools are a setup blocker, not browser permission. Install only
    within the user's setup authority.
 2. Choose a task-specific temporary output directory outside source repositories.

@@ -1,0 +1,16 @@
+name: Closure needs a comment
+on:
+  issues:
+    types: [closed]
+  pull_request_target:
+    types: [closed]
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+jobs:
+  closure:
+    uses: tilorahdotco/.github/.github/workflows/closure-comment.yml@398e6229fcf3d0667f71535c096c4a4c767d7568 # main
+    with:
+      runner: ubuntu-latest
+      contributing-link: https://github.com/pbember/media-extract-skill/blob/main/README.md

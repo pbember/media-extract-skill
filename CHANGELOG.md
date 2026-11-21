@@ -6,6 +6,7 @@
 
 ## Unreleased
 
+- Add a workflow that reopens a closed issue or unmerged PR that has no closing comment. Internal. Nothing changes for you.
 - Add `--device {auto,cuda,cpu}` and `--compute-type` to the transcription
   helper. An explicit device disables the CPU fallback. Output JSON is unchanged.
 - Document `deno` as a yt-dlp prerequisite for YouTube. Correct the README
